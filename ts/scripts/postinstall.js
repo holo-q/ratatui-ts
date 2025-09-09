@@ -13,30 +13,43 @@ function exists(p) { try { return fs.statSync(p).isFile(); } catch { return fals
 
 function tryPaths() {
   const here = __dirname;
+  const name = libName();
+  const plat = `${process.platform}-${process.arch}`;
+  const cands = [process.env.RATATUI_FFI_PATH].filter(Boolean);
+  // prebuilt bundled path (if present)
+  cands.push(path.resolve(here, '..', 'prebuilt', plat, name));
+  // in-repo build outputs
   const rels = [
     ['..','..','ratatui-ffi','target','release'],
     ['..','..','ratatui-ffi','target','debug'],
     ['..','..','..','ratatui-ffi','target','release'],
     ['..','..','..','ratatui-ffi','target','debug'],
   ];
-  const name = libName();
-  const cands = [process.env.RATATUI_FFI_PATH].filter(Boolean);
   for (const segs of rels) {
     cands.push(path.resolve(here, ...segs, name));
   }
   return cands.filter(Boolean);
 }
 
+function copyToNative(src) {
+  const name = libName();
+  const outDir = path.resolve(__dirname, '..', 'native');
+  fs.mkdirSync(outDir, { recursive: true });
+  const dst = path.join(outDir, name);
+  fs.copyFileSync(src, dst);
+  return dst;
+}
+
 function main() {
   const found = tryPaths().find(exists);
   if (found) {
-    console.log(`[ratatui-ts] Using native library: ${found}`);
+    const dst = copyToNative(found);
+    console.log(`[ratatui-ts] Selected native library -> ${dst}`);
     return;
   }
   console.warn('[ratatui-ts] WARNING: ratatui_ffi native library was not found.');
-  console.warn('[ratatui-ts] Set RATATUI_FFI_PATH to the absolute path of the compiled library (.so/.dylib/.dll).');
-  console.warn('[ratatui-ts] Or build it locally: cargo build --release -p ratatui_ffi');
+  console.warn('[ratatui-ts] Set RATATUI_FFI_PATH to the absolute path of the compiled library (.so/.dylib/.dll),');
+  console.warn('[ratatui-ts] place a prebuilt in ts/prebuilt/<platform-arch>/, or build locally: cargo build --release -p ratatui_ffi');
 }
 
 main();
-

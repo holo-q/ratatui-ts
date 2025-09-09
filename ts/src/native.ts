@@ -62,6 +62,13 @@ function tryPaths(): string[] {
   const here = path.resolve(__dirname);
   const candidates = [] as string[];
   if (env) candidates.push(env);
+  // packaged native/ location inside this module
+  candidates.push(path.resolve(here, '..', 'native', platformLibName()));
+  candidates.push(path.resolve(here, 'native', platformLibName()));
+  // prebuilt per-platform locations
+  const plat = `${process.platform}-${process.arch}`;
+  candidates.push(path.resolve(here, '..', 'prebuilt', plat, platformLibName()));
+  candidates.push(path.resolve(here, 'prebuilt', plat, platformLibName()));
   // in-repo common locations
   const rels = [
     ['..', '..', 'ratatui-ffi', 'target', 'release'],
