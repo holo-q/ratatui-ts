@@ -1,0 +1,34 @@
+{
+  "name": "ratatui-ts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript bindings for ratatui_ffi via ffi-napi",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "lint": "echo 'no linter configured'",
+    "test": "vitest run",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "dependencies": {
+    "ffi-napi": "^4.0.3",
+    "ref-napi": "^3.0.3",
+    "ref-struct-di": "^1.1.1",
+    "ref-union-di": "^1.0.1",
+    "ref-array-di": "^1.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "tsup": "^8.2.4",
+    "vitest": "^2.0.5"
+  }
+}

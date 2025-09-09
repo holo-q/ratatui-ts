@@ -1,0 +1,27 @@
+# Top-level Git ignore for ratatui-ts workspace
+
+# Ignore the nested ratatui-ffi repository entirely
+ratatui-ffi/
+
+# Node / TypeScript artifacts
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.*
+
+# Editor/OS
+.DS_Store
+.idea/
+.vscode/
+
+# Misc caches
+.eslintcache
+.turbo/
+
