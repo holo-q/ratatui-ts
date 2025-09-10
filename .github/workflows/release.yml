@@ -1,0 +1,126 @@
+name: Build prebuilts and publish
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-native:
+    name: Build native (${{ matrix.label }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            platform: linux
+            arch: x64
+            label: linux-x64
+          - runner: ubuntu-24.04-arm64
+            platform: linux
+            arch: arm64
+            label: linux-arm64
+          - runner: macos-13
+            platform: darwin
+            arch: x64
+            label: darwin-x64
+          - runner: macos-14
+            platform: darwin
+            arch: arm64
+            label: darwin-arm64
+          - runner: windows-latest
+            platform: win32
+            arch: x64
+            label: win32-x64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build ratatui_ffi (release)
+        run: |
+          cd ratatui-ffi
+          cargo build --release -p ratatui_ffi
+
+      - name: Prepare prebuilt folder
+        shell: bash
+        run: |
+          mkdir -p ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}
+          if [[ "${{ matrix.platform }}" == "win32" ]]; then
+            cp ratatui-ffi/target/release/ratatui_ffi.dll ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/ratatui_ffi.dll
+          elif [[ "${{ matrix.platform }}" == "darwin" ]]; then
+            cp ratatui-ffi/target/release/libratatui_ffi.dylib ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/libratatui_ffi.dylib
+          else
+            cp ratatui-ffi/target/release/libratatui_ffi.so ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/libratatui_ffi.so
+          fi
+
+      - name: Upload prebuilt artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ts-prebuilt-${{ matrix.platform }}-${{ matrix.arch }}
+          path: ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}
+
+  npm-publish:
+    name: Publish to npm
+    needs: build-native
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download prebuilts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ts-prebuilt-*
+          merge-multiple: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install and build
+        working-directory: ts
+        run: |
+          npm ci
+          npm run build
+
+      - name: Publish
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: ts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || secrets.NPM_API_TOKEN }}
+        run: npm publish --provenance --access public
+
+  gh-release:
+    name: Attach prebuilts to GitHub Release
+    needs: build-native
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download prebuilts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ts-prebuilt-*
+          merge-multiple: true
+          path: release-assets
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-assets/ts/prebuilt/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
