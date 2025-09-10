@@ -7,7 +7,7 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/holo-q/ratatui-ts.git"
   },
   "publishConfig": {
     "access": "public"
@@ -31,6 +31,8 @@
   },
   "scripts": {
     "build": "tsup",
+    "check:introspect": "node scripts/check-introspection.js",
+    "check:introspect:fm": "node scripts/check-introspection.js /tmp/ffi.json --features-map scripts/features-map.json",
     "lint": "echo 'no linter configured'",
     "test": "vitest run",
     "postinstall": "node scripts/postinstall.js",

@@ -20,6 +20,10 @@ function tryPaths() {
   cands.push(path.resolve(here, '..', 'prebuilt', plat, name));
   // in-repo build outputs
   const rels = [
+    // repo-root relative (scripts/ -> ../ratatui-ffi)
+    ['..','ratatui-ffi','target','release'],
+    ['..','ratatui-ffi','target','debug'],
+    // legacy fallbacks for nested layouts
     ['..','..','ratatui-ffi','target','release'],
     ['..','..','ratatui-ffi','target','debug'],
     ['..','..','..','ratatui-ffi','target','release'],
@@ -49,7 +53,7 @@ function main() {
   }
   console.warn('[ratatui-ts] WARNING: ratatui_ffi native library was not found.');
   console.warn('[ratatui-ts] Set RATATUI_FFI_PATH to the absolute path of the compiled library (.so/.dylib/.dll),');
-  console.warn('[ratatui-ts] place a prebuilt in ts/prebuilt/<platform-arch>/, or build locally: cargo build --release -p ratatui_ffi');
+  console.warn('[ratatui-ts] place a prebuilt in prebuilt/<platform-arch>/, or build locally: cargo build --release -p ratatui_ffi');
 }
 
 main();

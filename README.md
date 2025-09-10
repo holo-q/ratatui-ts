@@ -24,7 +24,6 @@ This produces a platform-specific dynamic library in `ratatui-ffi/target/release
 2) Install Node deps for the bindings package:
 
 ```
-cd ts
 npm install
 ```
 
@@ -83,6 +82,38 @@ You can also explicitly pass a path to `loadLibrary(path)`.
 - If you use headless APIs that return strings, the wrapper frees returned C strings via the provided `ratatui_string_free` to avoid leaks.
 - Scrollbar is feature-gated on the Rust side. If you enable it (`--features scrollbar`), the `Scrollbar` class becomes available and `widgetKind.Scrollbar` works in batched frames. Without it, the Scrollbar class throws on construction.
 
+## TypeScript niceties
+
+- Batch builders for spans/lines/rows to minimize FFI calls.
+- Layout helpers (`layoutSplitEx2`, `layoutSplitPercentages`) and `FrameBuilder` for batched drawing.
+- Headless helpers for full frames: text, styles_ex, and structured cells.
+- Rich widget APIs (blockAdv, title alignment, batch setters) while staying 1:1 with FFI.
+- Version and feature bits (`getVersion()`, `getFeatureBits()`), color helpers (`colorHelper.rgb/idx`).
+
+See the full feature guide: `docs/TS-FEATURES.md`.
+
+## Coverage check (bindings ↔ FFI)
+
+- Generate introspection JSON from the Rust side:
+
+```
+cd ratatui-ffi && cargo run --quiet --bin ffi_introspect -- --json > /tmp/ffi.json
+```
+
+- Run the TS coverage checker (fails on missing bindings):
+
+```
+node scripts/check-introspection.js /tmp/ffi.json --features-map scripts/features-map.json
+```
+
+- Optional: gate by feature bits (requires `ffi-napi` installed in this repo and a compiled library path):
+
+```
+node scripts/check-introspection.js /tmp/ffi.json --lib ./ratatui-ffi/target/release/libratatui_ffi.so --features-map scripts/features-map.json
+```
+
+- Use `--allow path/to/allow.txt` to temporarily silence known gaps (one export name per line). The script exits non-zero on any missing or invalid declarations.
+
 ## API surface
 
 - Classes
@@ -116,7 +147,7 @@ You can also explicitly pass a path to `loadLibrary(path)`.
 ## Testing (headless)
 
 - Snapshot-style tests can use headless helpers to render into strings without a TTY.
-- Example (Vitest): see `ts/test/paragraph.spec.ts`.
+- Example (Vitest): see `test/paragraph.spec.ts`.
 - Tests auto-skip if the native library is not found. Set `RATATUI_FFI_PATH` to enable execution on CI.
 
 ## Postinstall check
