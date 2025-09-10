@@ -1,0 +1,26 @@
+{
+  "SCROLLBAR": [
+    "^ratatui_scrollbar_"
+  ],
+  "CANVAS": [
+    "^ratatui_canvas_"
+  ],
+  "STYLE_DUMP_EX": [
+    "^ratatui_headless_render_frame_styles_ex$"
+  ],
+  "BATCH_TABLE_ROWS": [
+    "^ratatui_table_append_rows_",
+    "^ratatui_table_append_row_cells_lines$"
+  ],
+  "BATCH_LIST_ITEMS": [
+    "^ratatui_list_append_items_",
+    "^ratatui_list_append_item_spans$"
+  ],
+  "COLOR_HELPERS": [
+    "^ratatui_color_(rgb|indexed)$"
+  ],
+  "AXIS_LABELS": [
+    "^ratatui_chart_set_[xy]_labels_spans$"
+  ]
+}
+
