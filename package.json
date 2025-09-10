@@ -1,6 +1,6 @@
 {
   "name": "ratatui-ts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "TypeScript bindings for ratatui_ffi via ffi-napi",
   "license": "MIT",
