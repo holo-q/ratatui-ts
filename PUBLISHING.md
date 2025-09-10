@@ -17,7 +17,7 @@ Where `<libname>` is one of:
 
 1) Prebuilt binaries (recommended for end-users)
 - Build `ratatui_ffi` in CI for each target (linux-x64, linux-arm64, win32-x64, darwin-x64, darwin-arm64).
-- Place the outputs under `ts/prebuilt/<platform-arch>/<libname>` before publishing.
+- Place the outputs under `prebuilt/<platform-arch>/<libname>` before publishing.
 - On install, the `postinstall` script copies the correct file to `native/`, which the loader prefers.
 
 2) Build locally (requires Rust toolchain)
@@ -34,7 +34,7 @@ Where `<libname>` is one of:
   - macos-latest: x64, arm64
   - windows-latest: x64
 - Strip symbols for smaller artifacts when appropriate.
-- Upload artifacts named `<platform>-<arch>/<libname>` and place them under `ts/prebuilt/` during release.
+- Upload artifacts named `<platform>-<arch>/<libname>` and place them under `prebuilt/` during release.
 
 ## NPM packaging details
 
@@ -45,4 +45,3 @@ Where `<libname>` is one of:
 ## Feature flags
 
 - Scrollbar support is gated behind the Rust feature `scrollbar`. If you ship prebuilt libraries with this feature, the TypeScript `Scrollbar` class becomes available automatically; otherwise it throws on construction.
-
