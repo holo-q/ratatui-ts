@@ -31,6 +31,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "ci:wait": "node scripts/ci-monitor.js --repo holo-q/ratatui-ts --workflow release.yml --ref $CI_REF --token $GITHUB_TOKEN --poll 15",
     "check:introspect": "node scripts/check-introspection.js",
     "check:introspect:fm": "node scripts/check-introspection.js /tmp/ffi.json --features-map scripts/features-map.json",
     "lint": "echo 'no linter configured'",
