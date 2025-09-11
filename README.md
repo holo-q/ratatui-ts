@@ -1,4 +1,4 @@
-# ratatui-ts (TypeScript bindings)
+# <img src="./logo.webp" alt="ratatui_ffi logo" width="36"/> ratatui-ts (TypeScript bindings)
 
 High-quality TypeScript bindings for the `ratatui_ffi` C ABI, using `ffi-napi`.
 
