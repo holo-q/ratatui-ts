@@ -150,7 +150,7 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_headless_render_frame: [boolT, [u16, u16, ref.refType(ref.types.void), sizeT, charPtrPtr]],
     ratatui_headless_render_frame_styles: [boolT, [u16, u16, ref.refType(ref.types.void), sizeT, charPtrPtr]],
     ratatui_headless_render_frame_styles_ex: [boolT, [u16, u16, ref.refType(ref.types.void), sizeT, charPtrPtr]],
-    ratatui_headless_render_frame_cells: [boolT, [u16, u16, ref.refType(ref.types.void), sizeT, ref.refType(FfiCellInfo), sizeT]],
+    ratatui_headless_render_frame_cells: [sizeT, [u16, u16, ref.refType(ref.types.void), sizeT, ref.refType(FfiCellInfo), sizeT]],
     ratatui_headless_render_clear: [boolT, [u16, u16, charPtrPtr]],
 
     // Events

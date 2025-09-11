@@ -676,10 +676,11 @@ export function headlessRenderFrameCells(width: number, height: number, cmds: Ff
   const out = new CellsArr(new Array(cap).fill(new (FfiCellInfo as any)({ ch: 0, fg: 0, bg: 0, mods: 0 })));
   const ArrayCtor = FfiDrawCmdArray(cmds.length);
   const arr = new ArrayCtor(cmds);
-  const ok = (lib as any).ratatui_headless_render_frame_cells(width, height, arr, cmds.length, out, cap);
-  if (!ok) throw new Error('headless_render_frame_cells failed');
+  const count = (lib as any).ratatui_headless_render_frame_cells(width, height, arr, cmds.length, out, cap);
+  if (!count || count < 0) throw new Error('headless_render_frame_cells failed');
   const result: Array<{ ch: number; fg: number; bg: number; mods: number }> = [];
-  for (let i = 0; i < cap; i++) { const c = out[i] as any; result.push({ ch: c.ch, fg: c.fg, bg: c.bg, mods: c.mods }); }
+  const n = Math.min(cap, Number(count));
+  for (let i = 0; i < n; i++) { const c = out[i] as any; result.push({ ch: c.ch, fg: c.fg, bg: c.bg, mods: c.mods }); }
   return result;
 }
 
