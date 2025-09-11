@@ -35,8 +35,10 @@ jobs:
             label: win32-x64
     runs-on: ${{ matrix.runner }}
     steps:
-      - name: Checkout
+      - name: Checkout (with submodules)
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -49,20 +51,20 @@ jobs:
       - name: Prepare prebuilt folder
         shell: bash
         run: |
-          mkdir -p ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}
+          mkdir -p prebuilt/${{ matrix.platform }}-${{ matrix.arch }}
           if [[ "${{ matrix.platform }}" == "win32" ]]; then
-            cp ratatui-ffi/target/release/ratatui_ffi.dll ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/ratatui_ffi.dll
+            cp ratatui-ffi/target/release/ratatui_ffi.dll prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/ratatui_ffi.dll
           elif [[ "${{ matrix.platform }}" == "darwin" ]]; then
-            cp ratatui-ffi/target/release/libratatui_ffi.dylib ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/libratatui_ffi.dylib
+            cp ratatui-ffi/target/release/libratatui_ffi.dylib prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/libratatui_ffi.dylib
           else
-            cp ratatui-ffi/target/release/libratatui_ffi.so ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/libratatui_ffi.so
+            cp ratatui-ffi/target/release/libratatui_ffi.so prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/libratatui_ffi.so
           fi
 
       - name: Upload prebuilt artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ts-prebuilt-${{ matrix.platform }}-${{ matrix.arch }}
-          path: ts/prebuilt/${{ matrix.platform }}-${{ matrix.arch }}
+          name: prebuilt-${{ matrix.platform }}-${{ matrix.arch }}
+          path: prebuilt/${{ matrix.platform }}-${{ matrix.arch }}
 
   npm-publish:
     name: Publish to npm
@@ -77,7 +79,7 @@ jobs:
       - name: Download prebuilts
         uses: actions/download-artifact@v4
         with:
-          pattern: ts-prebuilt-*
+          pattern: prebuilt-*
           merge-multiple: true
 
       - name: Setup Node
@@ -87,14 +89,12 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install and build
-        working-directory: ts
         run: |
           npm ci
           npm run build
 
       - name: Publish
         if: startsWith(github.ref, 'refs/tags/v')
-        working-directory: ts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || secrets.NPM_API_TOKEN }}
         run: npm publish --provenance --access public
@@ -113,7 +113,7 @@ jobs:
       - name: Download prebuilts
         uses: actions/download-artifact@v4
         with:
-          pattern: ts-prebuilt-*
+          pattern: prebuilt-*
           merge-multiple: true
           path: release-assets
 
@@ -121,6 +121,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release-assets/ts/prebuilt/**
+            release-assets/prebuilt/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
