@@ -1,0 +1,3 @@
+[submodule "ratatui-ffi"]
+	path = ratatui-ffi
+	url = https://github.com/holo-q/ratatui-ffi

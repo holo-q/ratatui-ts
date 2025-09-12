@@ -1,7 +1,6 @@
 # Top-level Git ignore for ratatui-ts workspace
 
 # Ignore the nested ratatui-ffi repository entirely
-ratatui-ffi/
 
 # Node / TypeScript artifacts
 node_modules/
