@@ -35,7 +35,7 @@ jobs:
 
       - name: Install deps and build
         run: |
-          npm ci
+          npm install --no-audit --no-fund
           npm run build
 
       - name: Generate ASCII snapshots

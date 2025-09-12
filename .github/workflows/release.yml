@@ -75,6 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -93,7 +94,7 @@ jobs:
 
       - name: Install and build
         run: |
-          npm ci
+          npm install --no-audit --no-fund
           npm run build
 
       - name: Publish
