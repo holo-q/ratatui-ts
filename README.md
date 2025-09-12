@@ -1,6 +1,4 @@
-<!-- <img src="./logo.webp" alt="ratatui_ffi logo" width="36"/> -->
-
-# ratatui-ts — TypeScript Terminal UI (TUI) powered by Rust Ratatui
+# <img src="./logo.webp" alt="ratatui_ffi logo" width="36"/> ratatui-ts — TypeScript Terminal UI (TUI) powered by Rust Ratatui
 
 [![GitHub Release](https://img.shields.io/github/v/release/holo-q/ratatui-ts?logo=github)](https://github.com/holo-q/ratatui-ts/releases)
 [![npm](https://img.shields.io/npm/v/ratatui-ts?logo=npm)](https://www.npmjs.com/package/ratatui-ts)
