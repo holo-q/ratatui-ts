@@ -109,10 +109,10 @@ jobs:
           pattern: prebuilt-*
           merge-multiple: true
 
-      - name: Setup Node
+      - name: Setup Node (Node 18 for ffi-napi compat)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install and build
