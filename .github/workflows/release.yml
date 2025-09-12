@@ -37,31 +37,54 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Show repository contents
+      - name: Show repository contents (POSIX)
+        if: runner.os != 'Windows'
         run: |
           pwd
           ls -la
           git submodule status || true
 
+      - name: Show repository contents (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-Location
+          Get-ChildItem -Force
+          git submodule status || Write-Host 'no submodule info'
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build ratatui_ffi (release)
+      - name: Build ratatui_ffi (release) [POSIX]
+        if: runner.os != 'Windows'
         run: |
           cd ratatui-ffi
           cargo build --release -p ratatui_ffi
 
-      - name: Prepare prebuilt folder
+      - name: Build ratatui_ffi (release) [Windows]
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cd ratatui-ffi
+          cargo build --release -p ratatui_ffi
+
+      - name: Prepare prebuilt folder [POSIX]
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           mkdir -p prebuilt/${{ matrix.platform }}-${{ matrix.arch }}
-          if [[ "${{ matrix.platform }}" == "win32" ]]; then
-            cp ratatui-ffi/target/release/ratatui_ffi.dll prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/ratatui_ffi.dll
-          elif [[ "${{ matrix.platform }}" == "darwin" ]]; then
+          if [[ "${{ matrix.platform }}" == "darwin" ]]; then
             cp ratatui-ffi/target/release/libratatui_ffi.dylib prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/libratatui_ffi.dylib
           else
             cp ratatui-ffi/target/release/libratatui_ffi.so prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/libratatui_ffi.so
           fi
+
+      - name: Prepare prebuilt folder [Windows]
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "prebuilt/${{ matrix.platform }}-${{ matrix.arch }}" | Out-Null
+          Copy-Item ratatui-ffi/target/release/ratatui_ffi.dll "prebuilt/${{ matrix.platform }}-${{ matrix.arch }}/ratatui_ffi.dll"
 
       - name: Upload prebuilt artifact
         uses: actions/upload-artifact@v4
