@@ -29,8 +29,12 @@
       "import": "./dist/esm/index.js"
     }
   },
+  "bin": {
+    "ratatui-ts-demos": "dist/cjs/bin/demo.js"
+  },
   "scripts": {
     "build": "tsup",
+    "demo": "node dist/cjs/bin/demo.js",
     "ci:wait": "node scripts/ci-monitor.js --repo holo-q/ratatui-ts --workflow release.yml --ref $CI_REF --token $GITHUB_TOKEN --poll 15",
     "check:introspect": "node scripts/check-introspection.js",
     "check:introspect:fm": "node scripts/check-introspection.js /tmp/ffi.json --features-map scripts/features-map.json",

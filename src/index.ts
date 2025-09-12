@@ -377,15 +377,7 @@ export function headlessRenderClear(width: number, height: number): string {
   return str;
 }
 
-export function headlessRenderChart(width: number, height: number, c: Chart): string {
-  const outPtr = ref.alloc(charPtr) as unknown as Buffer; // char**
-  const ok = lib.ratatui_headless_render_chart(width, height, c.handle, outPtr);
-  if (!ok) throw new Error('headless_render_chart failed');
-  const cstrPtr = outPtr.deref();
-  const str = ref.readCString(cstrPtr, 0);
-  lib.ratatui_string_free(cstrPtr);
-  return str;
-}
+// (headlessRenderChart declared above)
 
 export type { FfiRectT as FfiRect, FfiEventT as RawEvent };
 

@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/bin/demo.ts'],
   splitting: false,
   sourcemap: true,
   clean: true,
@@ -21,4 +21,3 @@ export default defineConfig({
     if (options.format === 'cjs') options.outdir = 'dist/cjs';
   },
 });
-
