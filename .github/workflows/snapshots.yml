@@ -1,0 +1,90 @@
+name: Generate snapshots
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  snapshots:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build ratatui_ffi
+        run: |
+          cd ratatui-ffi
+          cargo build --release -p ratatui_ffi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps and build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Generate ASCII snapshots
+        env:
+          RATATUI_FFI_PATH: ${{ github.workspace }}/ratatui-ffi/target/release/libratatui_ffi.so
+        run: |
+          node scripts/gen-snapshots.js
+
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick fonts-dejavu-core
+
+      - name: Convert ASCII to PNG
+        run: |
+          mkdir -p docs/assets/snapshots
+          for f in docs/assets/snapshots/*.txt; do \
+            base=$(basename "$f" .txt); \
+            convert -background black -fill white -font DejaVu-Sans-Mono -pointsize 14 \
+              label:@"$f" docs/assets/snapshots/${base}.png; \
+          done
+
+      - name: Upload snapshot artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshots
+          path: |
+            docs/assets/snapshots/*.txt
+            docs/assets/snapshots/*.png
+
+      - name: Commit snapshots to default branch
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin "$DEFAULT_BRANCH"
+          git checkout "$DEFAULT_BRANCH"
+          # Ensure snapshots exist after checkout (they should be in the working tree)
+          if [ -d docs/assets/snapshots ]; then
+            git add docs/assets/snapshots/*.png docs/assets/snapshots/*.txt || true
+          fi
+          if git diff --cached --quiet; then
+            echo "No snapshot changes to commit."
+            exit 0
+          fi
+          git commit -m "ci(snapshots): update README snapshots for $TAG_NAME [skip ci]"
+          git push origin "$DEFAULT_BRANCH"
+
+  
