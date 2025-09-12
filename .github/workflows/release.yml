@@ -115,9 +115,11 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install deps (no scripts/optional) and build
+      - name: Install deps (no scripts) and build
         run: |
-          npm install --no-audit --no-fund --ignore-scripts --omit=optional
+          npm install --no-audit --no-fund --ignore-scripts
+          # Ensure rollup native optional deps are present for tsup
+          npm exec --yes -- @rollup/rollup-linux-x64-gnu --version || true
           npm run build
 
       - name: Publish
