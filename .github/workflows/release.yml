@@ -115,9 +115,9 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install and build
+      - name: Install deps (no scripts/optional) and build
         run: |
-          npm install --no-audit --no-fund
+          npm install --no-audit --no-fund --ignore-scripts --omit=optional
           npm run build
 
       - name: Publish
