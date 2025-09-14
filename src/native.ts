@@ -391,7 +391,7 @@ export const FfiDrawCmd = Struct({
   handle: voidPtr,
   rect: FfiRect,
 });
-export type FfiDrawCmd = { kind: number; handle: Buffer; rect: FfiRectT };
+export type FfiDrawCmd = { kind: number; handle: Buffer; rect: FfiRect };
 export const FfiDrawCmdArray = (len: number) => ArrayType(FfiDrawCmd, len);
 
 // Typed array helpers
