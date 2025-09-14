@@ -233,33 +233,33 @@ export class Terminal {
   }
 
   clear(): void {
-    lib.ratatui_terminal_clear(this.ptr);
+    (lib as any).ratatui_terminal_clear(this.ptr);
   }
 
   size(): { width: number; height: number } | null {
     const wRef = ref.alloc('uint16');
     const hRef = ref.alloc('uint16');
-    const ok = lib.ratatui_terminal_size(wRef, hRef);
+    const ok = (lib as any).ratatui_terminal_size(wRef, hRef);
     if (!ok) return null;
     return { width: wRef.deref(), height: hRef.deref() };
   }
 
   drawParagraph(p: Paragraph): boolean {
-    return !!lib.ratatui_terminal_draw_paragraph(this.ptr, p.handle);
+    return !!(lib as any).ratatui_terminal_draw_paragraph(this.ptr, p.handle);
   }
 
   drawParagraphIn(p: Paragraph, r: FfiRectT): boolean {
-    return !!lib.ratatui_terminal_draw_paragraph_in(this.ptr, p.handle, r);
+    return !!(lib as any).ratatui_terminal_draw_paragraph_in(this.ptr, p.handle, r);
   }
 
   // Other widgets
-  drawListIn(lst: List, r: FfiRectT): boolean { return !!lib.ratatui_terminal_draw_list_in(this.ptr, lst.handle, r); }
-  drawTableIn(tbl: Table, r: FfiRectT): boolean { return !!lib.ratatui_terminal_draw_table_in(this.ptr, tbl.handle, r); }
-  drawGaugeIn(g: Gauge, r: FfiRectT): boolean { return !!lib.ratatui_terminal_draw_gauge_in(this.ptr, g.handle, r); }
-  drawTabsIn(tabs: Tabs, r: FfiRectT): boolean { return !!lib.ratatui_terminal_draw_tabs_in(this.ptr, tabs.handle, r); }
-  drawBarChartIn(bc: BarChart, r: FfiRectT): boolean { return !!lib.ratatui_terminal_draw_barchart_in(this.ptr, bc.handle, r); }
-  drawSparklineIn(sp: Sparkline, r: FfiRectT): boolean { return !!lib.ratatui_terminal_draw_sparkline_in(this.ptr, sp.handle, r); }
-  drawChartIn(ch: Chart, r: FfiRectT): boolean { return !!lib.ratatui_terminal_draw_chart_in(this.ptr, ch.handle, r); }
+  drawListIn(lst: List, r: FfiRectT): boolean { return !!(lib as any).ratatui_terminal_draw_list_in(this.ptr, lst.handle, r); }
+  drawTableIn(tbl: Table, r: FfiRectT): boolean { return !!(lib as any).ratatui_terminal_draw_table_in(this.ptr, tbl.handle, r); }
+  drawGaugeIn(g: Gauge, r: FfiRectT): boolean { return !!(lib as any).ratatui_terminal_draw_gauge_in(this.ptr, g.handle, r); }
+  drawTabsIn(tabs: Tabs, r: FfiRectT): boolean { return !!(lib as any).ratatui_terminal_draw_tabs_in(this.ptr, tabs.handle, r); }
+  drawBarChartIn(bc: BarChart, r: FfiRectT): boolean { return !!(lib as any).ratatui_terminal_draw_barchart_in(this.ptr, bc.handle, r); }
+  drawSparklineIn(sp: Sparkline, r: FfiRectT): boolean { return !!(lib as any).ratatui_terminal_draw_sparkline_in(this.ptr, sp.handle, r); }
+  drawChartIn(ch: Chart, r: FfiRectT): boolean { return !!(lib as any).ratatui_terminal_draw_chart_in(this.ptr, ch.handle, r); }
 
   static nextEvent(timeoutMs: number): Event | null {
     const evt = new FfiEvent();
@@ -279,7 +279,7 @@ export class Terminal {
 
   free(): void {
     if (!ref.isNull(this.ptr)) {
-      lib.ratatui_terminal_free(this.ptr);
+      (lib as any).ratatui_terminal_free(this.ptr);
       terminalRegistry.unregister(this.token);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this as any).ptr = ref.NULL;
