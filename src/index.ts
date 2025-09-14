@@ -126,7 +126,7 @@ export function rect(x: number, y: number, width: number, height: number): FfiRe
   return new FfiRect({ x, y, width, height });
 }
 
-const lib = loadLibrary();
+const lib: any = loadLibrary();
 
 // ---- Version and feature bits ----
 export function getVersion(): { major: number; minor: number; patch: number } {
@@ -290,7 +290,7 @@ export class Terminal {
 // Headless rendering convenience
 export function headlessRender(width: number, height: number, p: Paragraph): string {
   const outPtr = ref.alloc(charPtr) as unknown as Buffer; // char**
-  const ok = lib.ratatui_headless_render_paragraph(width, height, p.handle, outPtr);
+  const ok = (lib as any).ratatui_headless_render_paragraph(width, height, p.handle, outPtr);
   if (!ok) throw new Error('headless_render_paragraph failed');
   const cstrPtr = outPtr.deref();
   const str = ref.readCString(cstrPtr, 0);
@@ -300,7 +300,7 @@ export function headlessRender(width: number, height: number, p: Paragraph): str
 
 export function headlessRenderList(width: number, height: number, l: List): string {
   const outPtr = ref.alloc(charPtr) as unknown as Buffer; // char**
-  const ok = lib.ratatui_headless_render_list(width, height, l.handle, outPtr);
+  const ok = (lib as any).ratatui_headless_render_list(width, height, l.handle, outPtr);
   if (!ok) throw new Error('headless_render_list failed');
   const cstrPtr = outPtr.deref();
   const str = ref.readCString(cstrPtr, 0);
@@ -310,7 +310,7 @@ export function headlessRenderList(width: number, height: number, l: List): stri
 
 export function headlessRenderTable(width: number, height: number, t: Table): string {
   const outPtr = ref.alloc(charPtr) as unknown as Buffer; // char**
-  const ok = lib.ratatui_headless_render_table(width, height, t.handle, outPtr);
+  const ok = (lib as any).ratatui_headless_render_table(width, height, t.handle, outPtr);
   if (!ok) throw new Error('headless_render_table failed');
   const cstrPtr = outPtr.deref();
   const str = ref.readCString(cstrPtr, 0);
@@ -320,7 +320,7 @@ export function headlessRenderTable(width: number, height: number, t: Table): st
 
 export function headlessRenderGauge(width: number, height: number, g: Gauge): string {
   const outPtr = ref.alloc(charPtr) as unknown as Buffer; // char**
-  const ok = lib.ratatui_headless_render_gauge(width, height, g.handle, outPtr);
+  const ok = (lib as any).ratatui_headless_render_gauge(width, height, g.handle, outPtr);
   if (!ok) throw new Error('headless_render_gauge failed');
   const cstrPtr = outPtr.deref();
   const str = ref.readCString(cstrPtr, 0);
@@ -330,7 +330,7 @@ export function headlessRenderGauge(width: number, height: number, g: Gauge): st
 
 export function headlessRenderTabs(width: number, height: number, t: Tabs): string {
   const outPtr = ref.alloc(charPtr) as unknown as Buffer; // char**
-  const ok = lib.ratatui_headless_render_tabs(width, height, t.handle, outPtr);
+  const ok = (lib as any).ratatui_headless_render_tabs(width, height, t.handle, outPtr);
   if (!ok) throw new Error('headless_render_tabs failed');
   const cstrPtr = outPtr.deref();
   const str = ref.readCString(cstrPtr, 0);
