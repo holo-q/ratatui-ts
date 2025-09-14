@@ -45,6 +45,14 @@ npm install ratatui-ts
 If your library is not in the default search location, set:
 - `RATATUI_FFI_PATH` to the absolute path of the compiled library file
 
+### Notes on Node versions, ffi-napi, and CI
+
+- Native layer choice: These bindings use `ffi-napi`/`ref-napi`. They are widely used but can be sensitive to Node.js header/ABI shifts and node-gyp toolchains in clean CI environments.
+- Prebuilts first: We ship prebuilt `ratatui_ffi` libraries in `prebuilt/<platform-arch>/` and prefer loading them at runtime. You can also point to a locally built `ratatui_ffi` via `RATATUI_FFI_PATH`.
+- CI publish environment: Our GitHub Actions publish job currently uses Node 18 to avoid transient `ffi-napi` build breakage on newer Node releases when npm attempts to build from source.
+- Local dev guidance: Node 18–20 are recommended. On bleeding‑edge Node (e.g., 24.x), if `ffi-napi` rebuilds and fails, use an LTS Node (18/20) via `nvm`, or skip rebuilding entirely by using the shipped prebuilts with `RATATUI_FFI_PATH`.
+- Why you might see node-gyp errors: Some ecosystems deps (e.g., `get-uv-event-loop-napi-h`, `node-addon-api`) periodically tighten types or change headers; this can surface as C++ signature/const‑qualification errors when rebuilding `ffi-napi`. These do not affect the correctness of Ratatui itself; they’re build‑time friction when a rebuild is attempted.
+
 ## Examples
 - Full scene (layout + chart + canvas): `examples/full-scene.ts`
 - Batch widgets (paragraph/list/tabs/table/chart/bar/spark): `examples/batch-widgets.ts`

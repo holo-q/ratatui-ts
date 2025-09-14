@@ -1,5 +1,6 @@
 import ref from 'ref-napi';
 const ArrayType = require('ref-array-di')(ref);
+const Struct = require('ref-struct-di')(ref);
 import { loadLibrary, FfiStyle as FfiStyleT, FfiRect as FfiRectT, FfiEvent as FfiEventT, FfiDrawCmd as FfiDrawCmdT, FfiDrawCmdArray, U64Array, F64Array, charPtr, makeOptionalForeign } from './native';
 import { FfiStyle, FfiRect, FfiEvent, FfiDrawCmd, FfiCellInfo, FfiSpan, FfiLineSpans, FfiCellLines, FfiRowCellsLines } from './native';
 export { Align } from './native';
@@ -577,7 +578,8 @@ export class Chart {
       for (let i=0;i<s.points.length;i++){ const [x,y]=s.points[i]; flat[i*2]=x; flat[i*2+1]=y; }
       const Buf = F64Array(flat.length); const buf = new Buf(flat);
       keep.push(buf);
-      const spec = new (ref.struct({ name_utf8: ref.types.CString, points_xy: ref.refType(ref.types.double), len_pairs: ref.types.size_t || ref.types.ulong, style: FfiStyle, kind: ref.types.uint32 }) as any)({ name_utf8: s.name ?? ref.NULL, points_xy: buf, len_pairs: s.points.length, style: toFfiStyle(s.style), kind: s.kind });
+      const Spec = Struct({ name_utf8: ref.types.CString, points_xy: ref.refType(ref.types.double), len_pairs: (ref.types.size_t || ref.types.ulong), style: FfiStyle, kind: ref.types.uint32 });
+      const spec = new (Spec as any)({ name_utf8: s.name ?? ref.NULL, points_xy: buf, len_pairs: s.points.length, style: toFfiStyle(s.style), kind: s.kind });
       tmp.push(spec);
     }
     const Arr = ArrayType(tmp[0]?.constructor || ref.types.void, tmp.length);
@@ -823,9 +825,8 @@ export function buildSpans(spans: SpanInput[]): BuiltBuffer {
   const keep: Buffer[] = [];
   const spanStructs: any[] = [];
   for (const s of spans) {
-    const cstr = Buffer.from(s.text ?? '', 'utf8');
-    const cstrPtr = ref.allocCString(cstr) as unknown as Buffer;
-    keep.push(cstrPtr); keep.push(cstr);
+    const cstrPtr = ref.allocCString(s.text ?? '') as unknown as Buffer;
+    keep.push(cstrPtr);
     const fs = toFfiStyle(s.style);
     const span = new (FfiSpan as any)({ text_utf8: cstrPtr, style: fs });
     spanStructs.push(span);

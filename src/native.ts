@@ -151,7 +151,6 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_headless_render_frame_styles: [boolT, [u16, u16, ref.refType(ref.types.void), sizeT, charPtrPtr]],
     ratatui_headless_render_frame_styles_ex: [boolT, [u16, u16, ref.refType(ref.types.void), sizeT, charPtrPtr]],
     ratatui_headless_render_frame_cells: [sizeT, [u16, u16, ref.refType(ref.types.void), sizeT, ref.refType(FfiCellInfo), sizeT]],
-    ratatui_headless_render_clear: [boolT, [u16, u16, charPtrPtr]],
 
     // Events
     ratatui_next_event: [boolT, [u64, ref.refType(FfiEvent)]],
@@ -353,7 +352,7 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_headless_render_canvas: [boolT, [u16, u16, voidPtr, charPtrPtr]],
 
     // Terminal helpers
-    ratatui_terminal_size: [boolT, [ref.refType(u16), ref.refType(u16)]],
+    // ratatui_terminal_size already defined above under Terminal
     ratatui_terminal_disable_raw: [boolT, [voidPtr]],
     ratatui_terminal_enable_raw: [boolT, [voidPtr]],
     ratatui_terminal_enter_alt: [boolT, [voidPtr]],
