@@ -126,6 +126,14 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || secrets.NPM_API_TOKEN }}
         run: npm publish --provenance --access public
 
+      - name: Deprecate old package name
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || secrets.NPM_API_TOKEN }}
+        run: |
+          echo "Deprecating 'ratatui-ts' in favor of 'ratatui'"
+          npm deprecate ratatui-ts@"*" "Renamed to 'ratatui' — please install 'ratatui'"
+
   gh-release:
     name: Attach prebuilts to GitHub Release
     needs: build-native
