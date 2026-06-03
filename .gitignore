@@ -11,6 +11,13 @@ npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Lockfile intentionally untracked (CI installs fresh; remote never tracked one)
+package-lock.json
+
+# Native lib dropped by scripts/postinstall.js at install time — an artifact,
+# never source. The org publish checklist forbids tracked .so files.
+native/
+
 # Env files
 .env
 .env.*

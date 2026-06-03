@@ -4,6 +4,8 @@ const Struct = require('ref-struct-di')(ref);
 import { loadLibrary, FfiStyle as FfiStyleT, FfiRect as FfiRectT, FfiEvent as FfiEventT, FfiDrawCmd as FfiDrawCmdT, FfiDrawCmdArray, U64Array, F64Array, charPtr, makeOptionalForeign } from './native';
 import { FfiStyle, FfiRect, FfiEvent, FfiDrawCmd, FfiCellInfo, FfiSpan, FfiLineSpans, FfiCellLines, FfiRowCellsLines } from './native';
 export { Align } from './native';
+import { installGenerated } from './wrappers.generated';
+export type { SpanInput as GeneratedSpanInput } from './wrappers.generated';
 
 // enums mirroring the Rust/C ABI
 export const color = {
@@ -524,7 +526,9 @@ export class BarChart {
     const built = buildSpans(titleSpans);
     try { (lib as any).ratatui_barchart_set_block_adv(this.ptr, bordersBits, borderType, padL, padT, padR, padB, built.ptr, built.len); } finally { built.free(); }
   }
-  setBlockTitleAlignment(align: number){ (lib as any).ratatui_barchart_set_block_title_alignment(this.ptr, align); }
+  // NOTE: ratatui_barchart_set_block_title_alignment dropped from the 349-fn
+  // FFI surface (ffi 0.2.6 / ratatui 0.29) — title alignment now folded into
+  // setBlockAdv. The standalone setter is gone.
   get handle() { return this.ptr; }
   free() { if (!ref.isNull(this.ptr)) { lib.ratatui_barchart_free(this.ptr); barChartRegistry.unregister(this.token); (this as any).ptr = ref.NULL; } }
 }
@@ -548,7 +552,8 @@ export class Sparkline {
     const built = buildSpans(titleSpans);
     try { (lib as any).ratatui_sparkline_set_block_adv(this.ptr, bordersBits, borderType, padL, padT, padR, padB, built.ptr, built.len); } finally { built.free(); }
   }
-  setBlockTitleAlignment(align: number){ (lib as any).ratatui_sparkline_set_block_title_alignment(this.ptr, align); }
+  // NOTE: ratatui_sparkline_set_block_title_alignment dropped from the 349-fn
+  // FFI surface (ffi 0.2.6 / ratatui 0.29) — alignment folded into setBlockAdv.
   get handle() { return this.ptr; }
   free() { if (!ref.isNull(this.ptr)) { lib.ratatui_sparkline_free(this.ptr); sparklineRegistry.unregister(this.token); (this as any).ptr = ref.NULL; } }
 }
@@ -595,9 +600,10 @@ export class Chart {
   setXLabelsSpans(lines: Array<Array<{ text: string; style?: Style }>>) { const built = buildLineSpans(lines); try { (lib as any).ratatui_chart_set_x_labels_spans(this.ptr, built.ptr, built.len); } finally { built.free(); } }
   setYLabelsSpans(lines: Array<Array<{ text: string; style?: Style }>>) { const built = buildLineSpans(lines); try { (lib as any).ratatui_chart_set_y_labels_spans(this.ptr, built.ptr, built.len); } finally { built.free(); } }
   setLabelsAlignment(xAlign: number, yAlign: number) { (lib as any).ratatui_chart_set_labels_alignment(this.ptr, xAlign, yAlign); }
-  reserveDatasets(n: number) { (lib as any).ratatui_chart_reserve_datasets(this.ptr, n); }
+  // NOTE: ratatui_chart_reserve_datasets + ratatui_chart_set_block_title_alignment
+  // both dropped from the 349-fn FFI surface (ffi 0.2.6 / ratatui 0.29) — the
+  // capacity hint is gone and title alignment is folded into setBlockAdv.
   setBlockTitle(title: string | null, showBorder: boolean) { lib.ratatui_chart_set_block_title(this.ptr, title ?? ref.NULL, showBorder); }
-  setBlockTitleAlignment(align: number) { (lib as any).ratatui_chart_set_block_title_alignment(this.ptr, align); }
   setBlockAdv(bordersBits: number, borderType: number, padL: number, padT: number, padR: number, padB: number, titleSpans: Array<{text:string; style?: Style}>) {
     const built = buildSpans(titleSpans);
     try { (lib as any).ratatui_chart_set_block_adv(this.ptr, bordersBits, borderType, padL, padT, padR, padB, built.ptr, built.len); } finally { built.free(); }
@@ -908,3 +914,19 @@ const canvasRegistry = new FinalizationRegistry<Buffer>((p)=>{ try { (lib as any
 // -------- LineGauge --------
 export class LineGauge { private ptr: Buffer; private token: object; constructor(){ this.ptr=(lib as any).ratatui_linegauge_new(); if(ref.isNull(this.ptr)) throw new Error('ratatui_linegauge_new failed'); this.token={}; lineGaugeRegistry.register(this,this.ptr,this.token);} setRatio(r:number){ (lib as any).ratatui_linegauge_set_ratio(this.ptr, r); return this; } setLabel(s:string|null){ (lib as any).ratatui_linegauge_set_label(this.ptr, s ?? ref.NULL); return this; } setStyle(st?:Style){ (lib as any).ratatui_linegauge_set_style(this.ptr, toFfiStyle(st)); return this; } setBlockTitle(t:string|null, showBorder:boolean){ (lib as any).ratatui_linegauge_set_block_title(this.ptr, t ?? ref.NULL, showBorder); return this; } setBlockTitleAlignment(align:number){ (lib as any).ratatui_linegauge_set_block_title_alignment(this.ptr, align); return this; } get handle(){ return this.ptr; } free(){ if (!ref.isNull(this.ptr)) { (lib as any).ratatui_linegauge_free(this.ptr); lineGaugeRegistry.unregister(this.token); (this as any).ptr = ref.NULL; } }}
 const lineGaugeRegistry = new FinalizationRegistry<Buffer>((p)=>{ try { (lib as any).ratatui_linegauge_free(p); } catch {} });
+
+// -------- Stage-2 generated ergonomic wrappers --------
+// Install the codegen'd fluent setters / append-add methods / static headless
+// render helpers onto the widget classes above. We inject everything the
+// generated installer needs (so the generated module has no runtime dependency
+// on this one — no import cycle). The installer guards each member with a
+// `name in target` check, so any hand-written method here always wins. See
+// scripts/gen-wrappers.js + src/wrappers.generated.ts for the full design.
+installGenerated({
+  ref,
+  charPtr,
+  lib,
+  buildSpans,
+  buildLineSpans,
+  Paragraph, List, Table, Gauge, Tabs, BarChart, Sparkline, Chart, Canvas, LineGauge, Scrollbar,
+});
