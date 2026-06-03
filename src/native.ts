@@ -1,4 +1,4 @@
-// GENERATED from bindings.json by scripts/gen-native.js — DO NOT EDIT. Regenerate with `just gen`. ffi=0.2.6 ratatui=0.29
+// GENERATED from bindings.json by scripts/gen-native.js — DO NOT EDIT. Regenerate with `just gen`. ffi=0.2.6 ratatui=0.30
 
 import path from 'path';
 import fs from 'fs';
@@ -296,6 +296,7 @@ export const FfiLegendPosition = { Bottom: 0, BottomLeft: 1, BottomRight: 2, Lef
 export const FfiListDirection = { BottomToTop: 0, TopToBottom: 1 } as const;
 export const FfiMapResolution = { Low: 0, High: 1 } as const;
 export const FfiMarker = { Bar: 0, Block: 1, Braille: 2, Dot: 3, HalfBlock: 4 } as const;
+export const FfiMascotEye = { Default: 0, Red: 1 } as const;
 export const FfiMouseButton = { Left: 1, Right: 2, Middle: 3, None: 0 } as const;
 export const FfiMouseKind = { Down: 1, Up: 2, Drag: 3, Moved: 4, ScrollUp: 5, ScrollDown: 6 } as const;
 export const FfiPosition = { Bottom: 0, Top: 1 } as const;
@@ -413,7 +414,6 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_border_get_quadrant_top_right_bottom_left_bottom_right: [FfiStr, []],
     ratatui_border_get_rounded: [FfiSymbolsBorderSet, []],
     ratatui_border_get_thick: [FfiSymbolsBorderSet, []],
-    ratatui_braille_get_blank: [u16, []],
     ratatui_canvas_add_line: ['void', [voidPtr, ref.types.double, ref.types.double, ref.types.double, ref.types.double, FfiStyle]],
     ratatui_canvas_add_points: ['void', [voidPtr, voidPtr, sizeT, FfiStyle, u32]],
     ratatui_canvas_add_rect: ['void', [voidPtr, ref.types.double, ref.types.double, ref.types.double, ref.types.double, FfiStyle, boolT]],
@@ -476,6 +476,7 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_headless_render_paragraph: [boolT, [u16, u16, voidPtr, voidPtr]],
     ratatui_headless_render_ratatuilogo: [boolT, [u16, u16, voidPtr]],
     ratatui_headless_render_ratatuilogo_sized: [boolT, [u16, u16, u32, voidPtr]],
+    ratatui_headless_render_ratatuimascot: [boolT, [u16, u16, u32, voidPtr]],
     ratatui_headless_render_scrollbar: [boolT, [u16, u16, voidPtr, voidPtr]],
     ratatui_headless_render_sparkline: [boolT, [u16, u16, voidPtr, voidPtr]],
     ratatui_headless_render_table: [boolT, [u16, u16, voidPtr, voidPtr]],
@@ -624,6 +625,7 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_paragraph_set_wrap: ['void', [voidPtr, boolT]],
     ratatui_ratatuilogo_draw_in: [boolT, [voidPtr, FfiRect]],
     ratatui_ratatuilogo_draw_sized_in: [boolT, [voidPtr, FfiRect, u32]],
+    ratatui_ratatuimascot_draw_in: [boolT, [voidPtr, FfiRect, u32]],
     ratatui_scrollbar_configure: ['void', [voidPtr, u32, u16, u16, u16]],
     ratatui_scrollbar_free: ['void', [voidPtr]],
     ratatui_scrollbar_get_double_horizontal: [FfiSymbolsScrollbarSet, []],

@@ -1,4 +1,4 @@
-// GENERATED from bindings.json by scripts/gen-wrappers.js — DO NOT EDIT. Regenerate with `just gen`. ffi=0.2.6 ratatui=0.29
+// GENERATED from bindings.json by scripts/gen-wrappers.js — DO NOT EDIT. Regenerate with `just gen`. ffi=0.2.6 ratatui=0.30
 //
 // Stage-2 ergonomic wrappers: fluent setters / append-add / static headless
 // render helpers, attached to the hand-written widget classes in ./index via
