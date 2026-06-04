@@ -191,32 +191,6 @@ export const FfiStr = Struct({
 });
 export type FfiStr = { ptr: Buffer; len: number };
 
-export const FfiSymbolsBarSet = Struct({
-  full: FfiStr,
-  seven_eighths: FfiStr,
-  three_quarters: FfiStr,
-  five_eighths: FfiStr,
-  half: FfiStr,
-  three_eighths: FfiStr,
-  one_quarter: FfiStr,
-  one_eighth: FfiStr,
-  empty: FfiStr,
-});
-export type FfiSymbolsBarSet = { full: FfiStr; seven_eighths: FfiStr; three_quarters: FfiStr; five_eighths: FfiStr; half: FfiStr; three_eighths: FfiStr; one_quarter: FfiStr; one_eighth: FfiStr; empty: FfiStr };
-
-export const FfiSymbolsBlockSet = Struct({
-  full: FfiStr,
-  seven_eighths: FfiStr,
-  three_quarters: FfiStr,
-  five_eighths: FfiStr,
-  half: FfiStr,
-  three_eighths: FfiStr,
-  one_quarter: FfiStr,
-  one_eighth: FfiStr,
-  empty: FfiStr,
-});
-export type FfiSymbolsBlockSet = { full: FfiStr; seven_eighths: FfiStr; three_quarters: FfiStr; five_eighths: FfiStr; half: FfiStr; three_eighths: FfiStr; one_quarter: FfiStr; one_eighth: FfiStr; empty: FfiStr };
-
 export const FfiSymbolsBorderSet = Struct({
   top_left: FfiStr,
   top_right: FfiStr,
@@ -243,14 +217,6 @@ export const FfiSymbolsLineSet = Struct({
   cross: FfiStr,
 });
 export type FfiSymbolsLineSet = { vertical: FfiStr; horizontal: FfiStr; top_right: FfiStr; top_left: FfiStr; bottom_right: FfiStr; bottom_left: FfiStr; vertical_left: FfiStr; vertical_right: FfiStr; horizontal_down: FfiStr; horizontal_up: FfiStr; cross: FfiStr };
-
-export const FfiSymbolsScrollbarSet = Struct({
-  track: FfiStr,
-  thumb: FfiStr,
-  begin: FfiStr,
-  end: FfiStr,
-});
-export type FfiSymbolsScrollbarSet = { track: FfiStr; thumb: FfiStr; begin: FfiStr; end: FfiStr };
 
 export const FfiTabsStyles = Struct({
   unselected: FfiStyle,
@@ -368,8 +334,14 @@ export function loadLibrary(explicitPath?: string) {
   loadedPath = libPath;
 
   const lib = ffi.Library(libPath, {
-    ratatui_bar_get_nine_levels: [FfiSymbolsBarSet, []],
-    ratatui_bar_get_three_levels: [FfiSymbolsBarSet, []],
+    ratatui_bar_get_five_eighths: [FfiStr, []],
+    ratatui_bar_get_full: [FfiStr, []],
+    ratatui_bar_get_half: [FfiStr, []],
+    ratatui_bar_get_one_eighth: [FfiStr, []],
+    ratatui_bar_get_one_quarter: [FfiStr, []],
+    ratatui_bar_get_seven_eighths: [FfiStr, []],
+    ratatui_bar_get_three_eighths: [FfiStr, []],
+    ratatui_bar_get_three_quarters: [FfiStr, []],
     ratatui_barchart_free: ['void', [voidPtr]],
     ratatui_barchart_new: [voidPtr, []],
     ratatui_barchart_set_bar_gap: ['void', [voidPtr, u16]],
@@ -381,11 +353,23 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_barchart_set_labels_spans: ['void', [voidPtr, voidPtr, sizeT]],
     ratatui_barchart_set_styles: ['void', [voidPtr, FfiStyle, FfiStyle, FfiStyle]],
     ratatui_barchart_set_values: ['void', [voidPtr, voidPtr, sizeT]],
-    ratatui_block_get_nine_levels: [FfiSymbolsBlockSet, []],
-    ratatui_block_get_three_levels: [FfiSymbolsBlockSet, []],
+    ratatui_block_get_five_eighths: [FfiStr, []],
+    ratatui_block_get_full: [FfiStr, []],
+    ratatui_block_get_half: [FfiStr, []],
+    ratatui_block_get_one_eighth: [FfiStr, []],
+    ratatui_block_get_one_quarter: [FfiStr, []],
+    ratatui_block_get_seven_eighths: [FfiStr, []],
+    ratatui_block_get_three_eighths: [FfiStr, []],
+    ratatui_block_get_three_quarters: [FfiStr, []],
     ratatui_border_get_double: [FfiSymbolsBorderSet, []],
     ratatui_border_get_empty: [FfiSymbolsBorderSet, []],
     ratatui_border_get_full: [FfiSymbolsBorderSet, []],
+    ratatui_border_get_heavy_double_dashed: [FfiSymbolsBorderSet, []],
+    ratatui_border_get_heavy_quadruple_dashed: [FfiSymbolsBorderSet, []],
+    ratatui_border_get_heavy_triple_dashed: [FfiSymbolsBorderSet, []],
+    ratatui_border_get_light_double_dashed: [FfiSymbolsBorderSet, []],
+    ratatui_border_get_light_quadruple_dashed: [FfiSymbolsBorderSet, []],
+    ratatui_border_get_light_triple_dashed: [FfiSymbolsBorderSet, []],
     ratatui_border_get_one_eighth_bottom_eight: [FfiStr, []],
     ratatui_border_get_one_eighth_left_eight: [FfiStr, []],
     ratatui_border_get_one_eighth_right_eight: [FfiStr, []],
@@ -458,9 +442,6 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_gauge_set_label_spans: ['void', [voidPtr, voidPtr, sizeT]],
     ratatui_gauge_set_ratio: ['void', [voidPtr, ref.types.float]],
     ratatui_gauge_set_styles: ['void', [voidPtr, FfiStyle, FfiStyle, FfiStyle]],
-    ratatui_half_block_get_full: [u32, []],
-    ratatui_half_block_get_lower: [u32, []],
-    ratatui_half_block_get_upper: [u32, []],
     ratatui_headless_render_barchart: [boolT, [u16, u16, voidPtr, voidPtr]],
     ratatui_headless_render_canvas: [boolT, [u16, u16, voidPtr, voidPtr]],
     ratatui_headless_render_chart: [boolT, [u16, u16, voidPtr, voidPtr]],
@@ -503,9 +484,27 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_line_get_double_vertical: [FfiStr, []],
     ratatui_line_get_double_vertical_left: [FfiStr, []],
     ratatui_line_get_double_vertical_right: [FfiStr, []],
+    ratatui_line_get_heavy_double_dash_horizontal: [FfiStr, []],
+    ratatui_line_get_heavy_double_dash_vertical: [FfiStr, []],
+    ratatui_line_get_heavy_double_dashed: [FfiSymbolsLineSet, []],
+    ratatui_line_get_heavy_quadruple_dash_horizontal: [FfiStr, []],
+    ratatui_line_get_heavy_quadruple_dash_vertical: [FfiStr, []],
+    ratatui_line_get_heavy_quadruple_dashed: [FfiSymbolsLineSet, []],
+    ratatui_line_get_heavy_triple_dash_horizontal: [FfiStr, []],
+    ratatui_line_get_heavy_triple_dash_vertical: [FfiStr, []],
+    ratatui_line_get_heavy_triple_dashed: [FfiSymbolsLineSet, []],
     ratatui_line_get_horizontal: [FfiStr, []],
     ratatui_line_get_horizontal_down: [FfiStr, []],
     ratatui_line_get_horizontal_up: [FfiStr, []],
+    ratatui_line_get_light_double_dash_horizontal: [FfiStr, []],
+    ratatui_line_get_light_double_dash_vertical: [FfiStr, []],
+    ratatui_line_get_light_double_dashed: [FfiSymbolsLineSet, []],
+    ratatui_line_get_light_quadruple_dash_horizontal: [FfiStr, []],
+    ratatui_line_get_light_quadruple_dash_vertical: [FfiStr, []],
+    ratatui_line_get_light_quadruple_dashed: [FfiSymbolsLineSet, []],
+    ratatui_line_get_light_triple_dash_horizontal: [FfiStr, []],
+    ratatui_line_get_light_triple_dash_vertical: [FfiStr, []],
+    ratatui_line_get_light_triple_dashed: [FfiSymbolsLineSet, []],
     ratatui_line_get_normal: [FfiSymbolsLineSet, []],
     ratatui_line_get_rounded: [FfiSymbolsLineSet, []],
     ratatui_line_get_rounded_bottom_left: [FfiStr, []],
@@ -559,6 +558,7 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_list_state_new: [voidPtr, []],
     ratatui_list_state_set_offset: ['void', [voidPtr, sizeT]],
     ratatui_list_state_set_selected: ['void', [voidPtr, ref.types.int32]],
+    ratatui_marker_get_dot: [FfiStr, []],
     ratatui_next_event: [boolT, [u64, voidPtr]],
     ratatui_palette_material_get_amber: [FfiAccentedPaletteU32, []],
     ratatui_palette_material_get_black: [u32, []],
@@ -628,10 +628,6 @@ export function loadLibrary(explicitPath?: string) {
     ratatui_ratatuimascot_draw_in: [boolT, [voidPtr, FfiRect, u32]],
     ratatui_scrollbar_configure: ['void', [voidPtr, u32, u16, u16, u16]],
     ratatui_scrollbar_free: ['void', [voidPtr]],
-    ratatui_scrollbar_get_double_horizontal: [FfiSymbolsScrollbarSet, []],
-    ratatui_scrollbar_get_double_vertical: [FfiSymbolsScrollbarSet, []],
-    ratatui_scrollbar_get_horizontal: [FfiSymbolsScrollbarSet, []],
-    ratatui_scrollbar_get_vertical: [FfiSymbolsScrollbarSet, []],
     ratatui_scrollbar_new: [voidPtr, []],
     ratatui_scrollbar_set_block_adv: ['void', [voidPtr, u8, u32, u16, u16, u16, u16, voidPtr, sizeT]],
     ratatui_scrollbar_set_block_title: ['void', [voidPtr, ref.types.CString, boolT]],
